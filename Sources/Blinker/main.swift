@@ -19,6 +19,29 @@ signal(SIGINT) { _ in
 
 gp.direction = .OUT
 
+
+import SwiftGtk
+
+let app = Application(applicationId: "com.example.application")
+app.run { window in
+  window.title = "Hello World"
+  window.defaultSize = Size(width: 400, height: 400)
+  window.resizable = true
+  
+  let button = Button(label: "Press Me")
+  button.clicked = { _ in
+    let newWindow = Window(windowType: .topLevel)
+    newWindow.title = "Just a window"
+    newWindow.defaultSize = Size(width: 200, height: 200)
+    let labelPressed = Label(text: "Oh, you pressed the button.")
+    newWindow.add(labelPressed)
+    
+    newWindow.showAll()
+  }
+  
+  window.add(button)
+}
+
 repeat {
   gp.value = (gp.value == 0) ? 1 : 0
   Thread.sleep(forTimeInterval: 0.25)
