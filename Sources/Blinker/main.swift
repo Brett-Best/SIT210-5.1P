@@ -1,36 +1,31 @@
 import Foundation
 import SwiftyGPIO
 
-let gp: GPIO = {
-  let gpios = SwiftyGPIO.GPIOs(for: .RaspberryPi3)
-  
-  gpios.forEach { e in
-    var value = e.value
-    
-    value.direction = .OUT
-    value.value = 1
-    
-    print(value.value)
-    
-    Thread.sleep(forTimeInterval: 0.5)
+let gpios = SwiftyGPIO.GPIOs(for: .RaspberryPi3)
+
+func setGPIOsValue(value: Bool) {
+  gpios.forEach { (_, gpio) in
+    gpio.value = value ? 1 : 0
   }
-  
-  guard let gp = gpios[.P4] else {
-    fatalError()
-  }
-  
-  return gp
-}()
+}
+
+gpios.forEach { (_, gpio) in
+  gpio.direction = .OUT
+}
+
+setGPIOsValue(value: false)
 
 signal(SIGINT) { _ in
-  gp.value = 0
+  setGPIOsValue(value: false)
   print("Blinker Finished")
   exit(0)
 }
 
-gp.direction = .OUT
+guard let ledGPIO = gpios[.P4] else {
+  fatalError()
+}
 
 repeat {
-  gp.value = (gp.value == 0) ? 1 : 0
+  ledGPIO.value = (ledGPIO.value == 0) ? 1 : 0
   Thread.sleep(forTimeInterval: 0.25)
 } while (true)
