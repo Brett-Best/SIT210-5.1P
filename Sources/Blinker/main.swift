@@ -21,9 +21,17 @@ signal(SIGINT) { _ in
   exit(0)
 }
 
+// Physical Pin -> GPIO Mapping
+// 7 -> P4
 guard let ledGPIO = gpios[.P4] else {
   fatalError()
 }
+
+print("""
+LED Blinker
+
+Toggles the output on physical pin 7.
+""")
 
 repeat {
   ledGPIO.value = (ledGPIO.value == 0) ? 1 : 0
